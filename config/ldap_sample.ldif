@@ -1,0 +1,247 @@
+# Sample LDIF data for the ApacheDS v1.0 Basic User's Guide
+# userpassword for all persons is "pass"
+
+version: 1
+
+dn: ou=people,dc=devops-sandbox,dc=org
+objectclass: organizationalUnit
+objectclass: top
+description: Contains entries which describe persons
+ou: people
+
+dn: ou=groups,dc=devops-sandbox,dc=org
+objectclass: organizationalUnit
+objectclass: top
+description: Contains entries which describe groups
+ou: groups
+
+##################
+## START persons #
+##################
+
+dn: cn=jsmith,ou=people,dc=devops-sandbox,dc=org
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+objectclass: top
+cn: John Smith
+description: John Smith
+businessCategory: administrators
+givenname: John
+sn: Smith
+uid: jsmith
+mail: john.smith@devops-sandbox.org
+userpassword: {SHA}nU4eI71bcnBGqeO0t9tXvY1u5oQ=
+
+dn: cn=ejohnson,ou=people,dc=devops-sandbox,dc=org
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+objectclass: top
+cn: Emily Johnson
+description: Emily Johnson
+businessCategory: administrators
+givenname: Emily
+sn: Johnson
+uid: ejohnson
+mail: emily.johnson@devops-sandbox.org
+userpassword: {SHA}nU4eI71bcnBGqeO0t9tXvY1u5oQ=
+
+dn: cn=mwilliams,ou=people,dc=devops-sandbox,dc=org
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+objectclass: top
+cn: Michael Williams
+description: Michael Williams
+businessCategory: administrators
+givenname: Michael
+sn: Williams
+uid: mwilliams
+mail: michael.williams@devops-sandbox.org
+userpassword: {SHA}nU4eI71bcnBGqeO0t9tXvY1u5oQ=
+
+dn: cn=sbrown,ou=people,dc=devops-sandbox,dc=org
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+objectclass: top
+cn: Sarah Brown
+description: Sarah Brown
+businessCategory: administrators
+givenname: Sarah
+sn: Brown
+uid: sbrown
+mail: sarah.brown@devops-sandbox.org
+userpassword: {SHA}nU4eI71bcnBGqeO0t9tXvY1u5oQ=
+
+dn: cn=cjones,ou=people,dc=devops-sandbox,dc=org
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+objectclass: top
+cn: Christopher Jones
+description: Christopher Jones
+businessCategory: administrators
+givenname: Christopher
+sn: Jones
+uid: cjones
+mail: christopher.jones@devops-sandbox.org
+userpassword: {SHA}nU4eI71bcnBGqeO0t9tXvY1u5oQ=
+
+dn: cn=jmiller,ou=people,dc=devops-sandbox,dc=org
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+objectclass: top
+cn: Jessica Miller
+description: Jessica Miller
+businessCategory: administrators
+givenname: Jessica
+sn: Miller
+uid: jmiller
+mail: jessica.miller@devops-sandbox.org
+userpassword: {SHA}nU4eI71bcnBGqeO0t9tXvY1u5oQ=
+
+dn: cn=ddavis,ou=people,dc=devops-sandbox,dc=org
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+objectclass: top
+cn: Daniel Davis
+description: Daniel Davis
+businessCategory: administrators
+givenname: Daniel
+sn: Davis
+uid: ddavis
+mail: daniel.davis@devops-sandbox.org
+userpassword: {SHA}nU4eI71bcnBGqeO0t9tXvY1u5oQ=
+
+dn: cn=ogarcia,ou=people,dc=devops-sandbox,dc=org
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+objectclass: top
+cn: Olivia Garcia
+description: Olivia Garcia
+businessCategory: administrators
+givenname: Olivia
+sn: Garcia
+uid: ogarcia
+mail: olivia.garcia@devops-sandbox.org
+userpassword: {SHA}nU4eI71bcnBGqeO0t9tXvY1u5oQ=
+
+dn: cn=mrodriguez,ou=people,dc=devops-sandbox,dc=org
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+objectclass: top
+cn: Matthew Rodriguez
+description: Matthew Rodriguez
+businessCategory: administrators
+givenname: Matthew
+sn: Rodriguez
+uid: mrodriguez
+mail: matthew.rodriguez@devops-sandbox.org
+userpassword: {SHA}nU4eI71bcnBGqeO0t9tXvY1u5oQ=
+
+dn: cn=smartinez,ou=people,dc=devops-sandbox,dc=org
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+objectclass: top
+cn: Sophia Martinez
+description: Sophia Martinez
+businessCategory: administrators
+givenname: Sophia
+sn: Martinez
+uid: smartinez
+mail: sophia.martinez@devops-sandbox.org
+userpassword: {SHA}nU4eI71bcnBGqeO0t9tXvY1u5oQ=
+
+dn: cn=adavis,ou=people,dc=devops-sandbox,dc=org
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+objectclass: top
+cn: Andrew Davis
+description: Andrew Davis
+businessCategory: administrators
+givenname: Andrew
+sn: Davis
+uid: adavis
+mail: andrew.davis@devops-sandbox.org
+userpassword: {SHA}nU4eI71bcnBGqeO0t9tXvY1u5oQ=
+
+dn: cn=abrown,ou=people,dc=devops-sandbox,dc=org
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+objectclass: top
+cn: Alice Brown
+description: Alice Brown
+businessCategory: administrators
+givenname: Alice
+sn: Brown
+uid: abrown
+mail: alice.brown@devops-sandbox.org
+userpassword: {SHA}nU4eI71bcnBGqeO0t9tXvY1u5oQ=
+
+dn: cn=dmiller,ou=people,dc=devops-sandbox,dc=org
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+objectclass: top
+cn: David Miller
+description: David Miller
+businessCategory: administrators
+givenname: David
+sn: Miller
+uid: dmiller
+mail: david.miller@devops-sandbox.org
+userpassword: {SHA}nU4eI71bcnBGqeO0t9tXvY1u5oQ=
+
+################
+## END persons #
+################
+
+
+# # LAB ACCESS
+# # --------------
+
+dn: cn=lab-access,ou=groups,dc=devops-sandbox,dc=org
+objectclass: groupOfUniqueNames
+objectclass: top
+cn: lab-access
+uniquemember: cn=jsmith,ou=people,dc=devops-sandbox,dc=org
+uniquemember: cn=ejohnson,ou=people,dc=devops-sandbox,dc=org
+uniquemember: cn=mwilliams,ou=people,dc=devops-sandbox,dc=org
+
+
+dn: cn=lab-admin,ou=groups,dc=devops-sandbox,dc=org
+objectclass: groupOfUniqueNames
+objectclass: top
+cn: lab-admin
+uniquemember: cn=sbrown,ou=people,dc=devops-sandbox,dc=org
+uniquemember: cn=cjones,ou=people,dc=devops-sandbox,dc=org
+uniquemember: cn=jmiller,ou=people,dc=devops-sandbox,dc=org
+uniquemember: cn=ddavis,ou=people,dc=devops-sandbox,dc=org
+
+# # PROD ACCESS
+# # --------------
+
+dn: cn=prod-access,ou=groups,dc=devops-sandbox,dc=org
+objectclass: groupOfUniqueNames
+objectclass: top
+cn: prod-access
+uniquemember: cn=ogarcia,ou=people,dc=devops-sandbox,dc=org
+uniquemember: cn=mrodriguez,ou=people,dc=devops-sandbox,dc=org
+uniquemember: cn=smartinez,ou=people,dc=devops-sandbox,dc=org
+uniquemember: cn=adavis,ou=people,dc=devops-sandbox,dc=org
+
+dn: cn=prod-admin,ou=groups,dc=devops-sandbox,dc=org
+objectclass: groupOfUniqueNames
+objectclass: top
+cn: prod-admin
+uniquemember: cn=abrown,ou=people,dc=devops-sandbox,dc=org
+uniquemember: cn=dmiller,ou=people,dc=devops-sandbox,dc=org

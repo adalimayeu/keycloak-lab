@@ -1,0 +1,238 @@
+- hosts: localhost
+  vars:
+    keycloak_url: http://127.0.0.1:8080     # without /auth https://github.com/ansible-collections/community.general/issues/5465#issuecomment-1374355307
+    keycloak_username: admin
+    keycloak_password: admin
+    users:
+      - { firstName: alice, lastName: alisson, attributes: [], groups: [{name: admins,     state: present}]}
+      - { firstName: rob,   lastName: kent,    attributes: [], groups: [{name: developers, state: present}]}
+      - { firstName: sam,   lastName: smith,   attributes: [], groups: [{name: analytics,  state: present}]}
+
+  tasks:
+    - name: Waiting for Keycloak is ready
+      ansible.builtin.uri:
+        url: "{{ keycloak_url }}/health/ready"
+        method: GET
+      register: _result
+      until: _result.status == 200
+      retries: 90
+      delay: 2
+
+    - name: Create LDAP user federation
+      community.general.keycloak_user_federation:
+        auth_keycloak_url: '{{ keycloak_url }}'
+        auth_username: '{{ keycloak_username }}'
+        auth_password: '{{ keycloak_password }}'
+        auth_realm: master
+        realm: labrealm
+        name: lab-ldap
+        state: present
+        provider_id: ldap
+        config:
+          allowKerberosAuthentication: false
+          authType: simple
+          batchSizeForSync: 1000
+          bindCredential: admin
+          bindDn: cn=admin,dc=devops-sandbox,dc=org
+          cachePolicy: DEFAULT
+          changedSyncPeriod: 86400
+          connectionPooling: false
+          connectionUrl: ldap://openldap:389
+          editMode: UNSYNCED
+          enabled: true
+          fullSyncPeriod: 604800
+          importEnabled: true
+          pagination: false
+          rdnLDAPAttribute: cn       # from LDAP schema
+          searchScope: 2
+          startTls: false
+          syncRegistrations: true    # modified
+          trustEmail: false
+          useKerberosForPasswordAuthentication: false
+          usePasswordModifyExtendedOp: false
+          useTruststoreSpi: always
+          userObjectClasses: inetOrgPerson, organizationalPerson  # from LDAP schema
+          usernameLDAPAttribute: cn  # from LDAP schema
+          usersDn: ou=people,dc=devops-sandbox,dc=org
+          uuidLDAPAttribute: entryUUID
+          validatePasswordPolicy: false
+          vendor: other
+        mappers:
+          # added to map users and their groups
+          - name: group
+            providerId: "group-ldap-mapper"
+            providerType: "org.keycloak.storage.ldap.mappers.LDAPStorageMapper"
+            config:
+              drop.non.existing.groups.during.sync: "false"
+              group.name.ldap.attribute: "cn"
+              group.object.classes: "groupOfUniqueNames"
+              groups.dn: "ou=groups,dc=devops-sandbox,dc=org"
+              groups.path: "/"
+              ignore.missing.groups: "false"
+              memberof.ldap.attribute: "memberOf"
+              membership.attribute.type: "DN"
+              membership.ldap.attribute: "uniqueMember"
+              membership.user.ldap.attribute: "cn"
+              mode: "READ_ONLY"
+              preserve.group.inheritance: "true"
+              user.roles.retrieve.strategy: "LOAD_GROUPS_BY_MEMBER_ATTRIBUTE"
+          ## default ones
+          - name: email
+            providerId: "user-attribute-ldap-mapper"
+            providerType: "org.keycloak.storage.ldap.mappers.LDAPStorageMapper"
+            config:
+              always.read.value.from.ldap: "false"
+              is.mandatory.in.ldap: "false"
+              ldap.attribute: "mail"
+              read.only: "true"
+              user.model.attribute: "email"
+          - name: "creation date"
+            providerId: "user-attribute-ldap-mapper"
+            providerType: "org.keycloak.storage.ldap.mappers.LDAPStorageMapper"
+            config:
+              always.read.value.from.ldap: "false"
+              is.mandatory.in.ldap: "false"
+              ldap.attribute: "createTimestamp"
+              read.only: "true"
+              user.model.attribute: "createTimestamp"
+          - name: "first name"
+            providerId: "user-attribute-ldap-mapper"
+            providerType: "org.keycloak.storage.ldap.mappers.LDAPStorageMapper"
+            config:
+              always.read.value.from.ldap: "false"
+              is.mandatory.in.ldap: "true"
+              ldap.attribute: "givenName"
+              read.only: "true"
+              user.model.attribute: "firstName"
+          - name: "last name"
+            providerId: "user-attribute-ldap-mapper"
+            providerType: "org.keycloak.storage.ldap.mappers.LDAPStorageMapper"
+            config:
+                always.read.value.from.ldap: "false"
+                is.mandatory.in.ldap: "true"
+                ldap.attribute: "sn"
+                read.only: "true"
+                user.model.attribute: "lastName"
+          - name: "username"
+            providerId: "user-attribute-ldap-mapper"
+            providerType: "org.keycloak.storage.ldap.mappers.LDAPStorageMapper"
+            config:
+              always.read.value.from.ldap: "false"
+              is.mandatory.in.ldap: "true"
+              ldap.attribute: "cn"
+              read.only: "true"
+              user.model.attribute: "username"
+
+    - name: Create "labrealm" Keycloak realm which emulates LAB environment
+      community.general.keycloak_realm:
+        auth_client_id: admin-cli
+        auth_keycloak_url: '{{ keycloak_url }}'
+        auth_realm: master
+        auth_username: '{{ keycloak_username }}'
+        auth_password: '{{ keycloak_password }}'
+        id: labrealm
+        realm: labrealm
+        state: present
+        enabled: true
+
+    - name: Create Keycloak realm user groups
+      community.general.keycloak_group:
+        auth_client_id: admin-cli
+        auth_keycloak_url: '{{ keycloak_url }}'
+        auth_realm: master
+        auth_username: '{{ keycloak_username }}'
+        auth_password: '{{ keycloak_password }}'
+        name: '{{ item }}'
+        realm: labrealm
+        state: present
+      loop:
+        - admins
+        - developers
+        - analytics
+
+    - name: Create users and add them to groups
+      community.general.keycloak_user:
+        auth_keycloak_url: '{{ keycloak_url }}'
+        auth_username: '{{ keycloak_username }}'
+        auth_password: '{{ keycloak_password }}'
+        auth_realm: master
+        realm: labrealm
+        username: '{{ item.firstName[0] + item.lastName }}'
+        firstName: '{{ item.firstName }}'
+        lastName: '{{ item.lastName }}'
+        email: '{{ item.firstName[0] + item.lastName }}@gmail.com'
+        enabled: true
+        emailVerified: false
+        credentials:
+            - type: password
+              value: '{{ item.firstName[0] + item.lastName }}'
+              temporary: false
+        attributes: '{{ item.attributes }}'
+        groups: '{{ item.groups }}'
+        state: present
+      loop: '{{ users }}'
+
+    ## Grafana client
+    - name: Create Keycloak client for grafana
+      community.general.keycloak_client:
+        auth_keycloak_url: '{{ keycloak_url }}'
+        auth_username: '{{ keycloak_username }}'
+        auth_password: '{{ keycloak_password }}'
+        auth_realm: master
+        realm: labrealm
+        client_id: grafana
+        protocol: openid-connect
+        standard_flow_enabled: true
+        implicit_flow_enabled: false
+        direct_access_grants_enabled: true
+        root_url: http://localhost:3000/
+        redirect_uris:
+          - '*'
+        web_origins:
+          - http://localhost:3000/
+        admin_url: http://localhost:3000/
+        base_url: http://localhost:3000/
+        state: present
+        client_authenticator_type: client-secret
+        secret: grafana-secret
+        default_client_scopes:
+          - email
+          - offline_access
+          - profile
+          - roles
+
+    - name: Create Keycloak grafana client roles
+      community.general.keycloak_role:
+        auth_keycloak_url: '{{ keycloak_url }}'
+        auth_username: '{{ keycloak_username }}'
+        auth_password: '{{ keycloak_password }}'
+        auth_realm: master
+        name: '{{ item }}'
+        realm: labrealm
+        client_id: grafana
+        state: present
+      loop:
+        - Admin
+        - Editor
+        - Viewer
+
+    - name: Map grafana client roles to appropriate realm groups
+      community.general.keycloak_client_rolemapping:
+        auth_keycloak_url: '{{ keycloak_url }}'
+        auth_username: '{{ keycloak_username }}'
+        auth_password: '{{ keycloak_password }}'
+        auth_realm: master
+        realm: labrealm
+        client_id: grafana
+        state: present
+        group_name: '{{ item.group_name }}'
+        roles: '{{ item.roles }}'
+      loop:
+        - { group_name: admins,      roles: [{name: Admin}] }
+        - { group_name: developers,  roles: [{name: Editor}]}
+        - { group_name: analytics,   roles: [{name: Viewer}]}
+        - { group_name: lab-admin,   roles: [{name: Admin}] }
+        - { group_name: lab-access,  roles: [{name: Editor}]}
+        - { group_name: prod-admin,  roles: [{name: Admin}] }
+        - { group_name: prod-access, roles: [{name: Editor}]}
+

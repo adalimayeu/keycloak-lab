@@ -1,0 +1,16 @@
+.vagrant
+.idea/
+.vscode/
+.venv/*
+
+### Terraform
+# Local .terraform directories
+**/.terraform/*
+
+### Ansible ###
+*.retry
+tion/lr-dumps/
+
+# MacOS temp files
+**/.DS_Store
+**/.DS_Store/*
